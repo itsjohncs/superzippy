@@ -14,6 +14,8 @@ What needs to be done from here is add in Python import hooks to make it so we c
 
 Once that is done, we just need to add a bootstrapping sort of file template that will automatically call zipsite, add the import hooks, then execute whatever script file the user provided. This should complete the effort.
 
+Of course we also need to create a script that will use distibute or w/e to install everything into a single directory (use the ``--home`` command line option and friends). Then just pointing zipsite at the correct place will make the magic happen.
+
 It may be worthwhile to try and get this into the Python standard library as well as this could be fairly useful, but I'm not sure what Python 3 has in store for this (hell, maybe they already do this.. might be worth verifying one way or the other).
 
 May your day be super zippy!
