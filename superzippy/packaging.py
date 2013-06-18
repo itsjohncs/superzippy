@@ -6,6 +6,8 @@ import sys
 import tempfile
 import os, os.path
 import zipdir
+import pkg_resources
+import shutil
 
 DEVNULL = open(os.devnull, "w")
 
@@ -33,6 +35,18 @@ def parse_arguments(args = sys.argv[1:]):
         make_option(
             "-q", "--quiet", action = "store_true",
             help = "No log messages will be output."
+        ),
+        make_option(
+            "-c", "--config", action = "store", default = "superconfig.py",
+            help =
+                "The configuration file to use when creating the archive. "
+                "Defaults to %default."
+        ),
+        make_option(
+            "-o", "--output", action = "store", default = None,
+            help =
+                "The name of the output file. Defaults to the name of the "
+                "package."
         )
     ]
 
@@ -71,6 +85,8 @@ def main(options, args):
     temp_dir = tempfile.mkdtemp()
     _dirty_files.append(temp_dir)
 
+    #### Create virtual environment
+
     log.debug("Creating virtual environment at %s.", temp_dir)
     output_target = None if options.debug else DEVNULL
 
@@ -87,10 +103,13 @@ def main(options, args):
 
         return 1
 
+    ##### Install package and dependencies
+
     package_to_install = args[0]
     pip_path = os.path.join(temp_dir, "bin", "pip")
 
     log.debug("Installing the package %s.", package_to_install)
+
     return_value = subprocess.call(
         [pip_path, "install", package_to_install],
         stdout = output_target,
@@ -102,8 +121,38 @@ def main(options, args):
 
         return 1
 
+    ##### Install bootstrapper
+
+    log.debug("Adding bootstrapper to the archive.")
+
+    bootstrap_files = {
+        "bootstrapper.py": "__main__.py",
+        "zipsite.py": "zipsite.py",
+        "module_locator.py": "module_locator.py"
+    }
+
+    for k, v in bootstrap_files.items():
+        source = pkg_resources.resource_stream("superzippy.bootstrapper", k)
+        dest = open(os.path.join(temp_dir, v), "w")
+
+        with source:
+            with dest:
+                shutil.copyfileobj(source, dest)
+
+    ##### Install configuration
+
+    log.debug("Copying configuration file to archive.")
+
+    shutil.copyfile(options.config, os.path.join(temp_dir, "superconfig.py"))
+
+    ##### Zip everything up into final file
+
     log.debug("Zipping up %s.", temp_dir)
-    zipdir.zipdir(temp_dir, package_to_install)
+
+    zipdir.zipdir(
+        temp_dir,
+        options.output if options.output else package_to_install
+    )
 
     return 0
 
