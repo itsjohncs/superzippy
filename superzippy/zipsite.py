@@ -120,6 +120,9 @@ def addsitedir(sitedir, known_paths = None):
     if not archive_path:
         return old_addsitedir(sitedir, effective_known_paths)
 
+    # Add the site directory itself
+    sys.path.append(sitedir)
+
     with zipfile.ZipFile(archive_path, mode = "r") as archive:
         # Go trhough everything in the archive...
         for i in archive.infolist():
@@ -166,7 +169,7 @@ def addpackage(sitedir, name, known_paths):
                 line = line.rstrip()
                 dir, dircase = makepath(sitedir, line)
                 if not dircase in known_paths and exists(dir):
-                    print "added", dir
+                    #Handy debug statement: print "added", dir
                     sys.path.append(dir)
                     effective_known_paths.add(dircase)
         except Exception:
