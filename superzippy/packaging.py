@@ -19,6 +19,7 @@ def destroy_dirty_files():
 
     for i in _dirty_files:
         log.debug("Deleting %s.", i)
+        shutil.rmtree(i)
 
     _dirty_files = []
 
