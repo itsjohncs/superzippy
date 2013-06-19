@@ -150,10 +150,22 @@ def main(options, args):
 
     log.debug("Zipping up %s.", temp_dir)
 
+    output_file = options.output if options.output else package_to_install
+
     zipdir.zipdir(
         temp_dir,
-        options.output if options.output else package_to_install
+        output_file
     )
+
+    #### Make that file executable
+
+    with file(output_file, "r") as f:
+        data = f.read()
+
+    with file(output_file, "w") as f:
+        f.write("#!/usr/bin/env python\n" + data)
+
+    os.chmod(output_file, 0755)
 
     return 0
 
