@@ -32,5 +32,9 @@ setup(
         "console_scripts": [
             "superzippy = superzippy.packaging:run"
         ]
-    }
+    },
+    zip_safe = True,
+    data_files = [
+        (".", ["LICENSE", "README.rst", "VERSION"])
+    ]
 )
