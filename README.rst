@@ -3,7 +3,7 @@ Super Zippy
 
 Super Zippy takes a Python package and its pure Python dependencies and transforms them all into a single executable file.
 
-This is similar to [cx_Freeze](http://cx-freeze.sourceforge.net/) except that it does not attempt to deal with non-pure Python dependencies and thus is much lighter weight and easier to use.
+This is similar to `cx_Freeze <http://cx-freeze.sourceforge.net/>`_ except that it does not attempt to deal with non-pure Python dependencies and thus is much lighter weight and easier to use.
 
 Examples
 --------
@@ -27,6 +27,17 @@ Motivation
 ----------
 
 I created this for a tool called the `Galah API Client <https://www.github.com/galah-group/galah-apiclient>`_ which is a simple tool that has only pure Python dependencies. It is basically a script but since it is a little complex I didn't want everything to be in a single file as that gets tedious fast... But I still wanted a good way to distribute it to my users who are not Python developers, may not have root access, and don't want to deal with ``virtualenv`` and ``pip``.
+
+Installing
+----------
+
+To install Super Zippy, just run
+
+```shell
+$ pip install superzippy
+```
+
+You can also install from the ``setup.py`` script yourself of course, or you can even create a super zipped up version of Super Zippy using Super Zippy. ``pip`` is probably the easiest way to go though if you're already familiar with Python packages.
 
 Authors
 -------
