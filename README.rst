@@ -21,7 +21,7 @@ And now we have a single file containing all of Super Zippy's dependencies and c
 How it Works
 ------------
 
-It installs the Python package you specify into a ``virtualenv`` using ``pip`` (so anything you can tell ``pip`` to install can be given to ``superzippy``), then grabs the site-packages directoy out of the virtual environment and sticks it in a zip file along with some super bootstrapping code. Then it just makes the zip file executable.
+It installs the Python package you specify into a ``virtualenv`` using ``pip`` (so anything you can tell ``pip`` to install can be given to ``superzippy``), then grabs the site-packages directory out of the virtual environment and sticks it in a zip file along with some super bootstrapping code. Then it just makes the zip file executable.
 
 Motivation
 ----------
