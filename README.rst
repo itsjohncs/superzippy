@@ -33,9 +33,9 @@ Installing
 
 To install Super Zippy, just run
 
-```shell
-$ pip install superzippy
-```
+.. code-block:: shell
+
+	$ pip install superzippy
 
 You can also install from the ``setup.py`` script yourself of course, or you can even create a super zipped up version of Super Zippy using Super Zippy. ``pip`` is probably the easiest way to go though if you're already familiar with Python packages.
 
