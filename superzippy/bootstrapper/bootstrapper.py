@@ -24,7 +24,7 @@ import os.path
 
 zipsite.addsitedir(
 	os.path.abspath(os.path.join(
-		module_locator.module_path(), "lib", "python2.7", "site-packages"
+		module_locator.module_path(), "site-packages"
 	)),
 	prepend_mode = True
 )

@@ -101,16 +101,16 @@ def main(options, args):
     log = logging.getLogger("superzippy")
 
     # Create the virtualenv directory
-    temp_dir = tempfile.mkdtemp()
-    _dirty_files.append(temp_dir)
+    virtualenv_dir = tempfile.mkdtemp()
+    _dirty_files.append(virtualenv_dir)
 
     #### Create virtual environment
 
-    log.debug("Creating virtual environment at %s.", temp_dir)
+    log.debug("Creating virtual environment at %s.", virtualenv_dir)
     output_target = None if options.debug else DEVNULL
 
     return_value = subprocess.call(
-        ["virtualenv", temp_dir],
+        ["virtualenv", virtualenv_dir],
         stdout = output_target,
         stderr = subprocess.STDOUT
     )
@@ -125,7 +125,7 @@ def main(options, args):
     ##### Install package and dependencies
 
     package_to_install = args[0]
-    pip_path = os.path.join(temp_dir, "bin", "pip")
+    pip_path = os.path.join(virtualenv_dir, "bin", "pip")
 
     log.debug("Installing the package %s.", package_to_install)
 
@@ -140,6 +140,18 @@ def main(options, args):
 
         return 1
 
+    #### Move site packages over to build directory
+
+    build_dir = tempfile.mkdtemp()
+    _dirty_files.append(build_dir)
+
+    site_package_dir = ""
+    for root, dirs, files in os.walk(virtualenv_dir):
+        if "site-packages" in dirs:
+            site_package_dir = os.path.join(root, "site-packages")
+
+    shutil.move(site_package_dir, build_dir)
+
     ##### Install bootstrapper
 
     log.debug("Adding bootstrapper to the archive.")
@@ -152,7 +164,7 @@ def main(options, args):
 
     for k, v in bootstrap_files.items():
         source = pkg_resources.resource_stream("superzippy.bootstrapper", k)
-        dest = open(os.path.join(temp_dir, v), "w")
+        dest = open(os.path.join(build_dir, v), "w")
 
         shutil.copyfileobj(source, dest)
 
@@ -163,16 +175,16 @@ def main(options, args):
 
     log.debug("Copying configuration file to archive.")
 
-    shutil.copyfile(options.config, os.path.join(temp_dir, "superconfig.py"))
+    shutil.copyfile(options.config, os.path.join(build_dir, "superconfig.py"))
 
     ##### Zip everything up into final file
 
-    log.debug("Zipping up %s.", temp_dir)
+    log.debug("Zipping up %s.", build_dir)
 
     output_file = options.output if options.output else package_to_install
 
     zipdir.zipdir(
-        temp_dir,
+        build_dir,
         output_file
     )
 
