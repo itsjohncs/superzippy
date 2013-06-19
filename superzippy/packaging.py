@@ -175,7 +175,8 @@ def main(options, args):
 
     log.debug("Copying configuration file to archive.")
 
-    shutil.copyfile(options.config, os.path.join(build_dir, "superconfig.py"))
+    with open(os.path.join(build_dir, "superconfig.py"), "w") as f:
+        f.write("entry_point = '%s'" % args[1])
 
     ##### Zip everything up into final file
 
