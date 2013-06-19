@@ -1,3 +1,6 @@
+# This file contains code primarily found from stack overflow, see there for
+# licensing terms.
+
 """
 Module for finding out where the current script is being executed from.
 

@@ -18,4 +18,4 @@ John Sullivan
 License
 -------
 
-None yet, you have no license to use this O.O. I'll stick licensing around when I'm ready, it'll be under Apache v2.0. If you're impatient badger me with emails.
+Apache License v2.0
