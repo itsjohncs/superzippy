@@ -136,9 +136,10 @@ def main(options, args):
         source = pkg_resources.resource_stream("superzippy.bootstrapper", k)
         dest = open(os.path.join(temp_dir, v), "w")
 
-        with source:
-            with dest:
-                shutil.copyfileobj(source, dest)
+        shutil.copyfileobj(source, dest)
+
+        source.close()
+        dest.close()
 
     ##### Install configuration
 
