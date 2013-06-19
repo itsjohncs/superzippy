@@ -44,22 +44,17 @@ def destroy_dirty_files():
 def parse_arguments(args = sys.argv[1:]):
     option_list = [
         make_option(
-            "-v", "--verbose", action = "store_true",
-            help = "INFO level log messages and above will be output."
-        ),
-        make_option(
-            "-d", "--debug", action = "store_true",
-            help = "DEBUG level log messages and above will be output."
+            "-v", "--verbose", action = "count",
+            help =
+                "May be specified thrice. If specified once, INFO messages and "
+                "above are output. If specified twice, DEBUG messages and "
+                "above are output. If specified thrice, DEBUG messages and "
+                "above are output, along with the output from any invoked "
+                "programs."
         ),
         make_option(
             "-q", "--quiet", action = "store_true",
-            help = "No log messages will be output."
-        ),
-        make_option(
-            "-c", "--config", action = "store", default = "superconfig.py",
-            help =
-                "The configuration file to use when creating the archive. "
-                "Defaults to %default."
+            help = "Only CRITICAL log messages will be output."
         ),
         make_option(
             "-o", "--output", action = "store", default = None,
@@ -70,7 +65,7 @@ def parse_arguments(args = sys.argv[1:]):
     ]
 
     parser = OptionParser(
-        usage = "usage: %prog [options] [PACKAGE]",
+        usage = "usage: %prog [options] [PACKAGE] [ENTRY POINT]",
         description =
             "Zips up a package and adds superzippy's super bootstrap logic to "
             "it.",
@@ -79,23 +74,26 @@ def parse_arguments(args = sys.argv[1:]):
 
     options, args = parser.parse_args(args)
 
-    if len(args) != 1:
-        parser.error("Exactly one argument must be supplied.")
+    if len(args) != 2:
+        parser.error("Exactly two arguments must be supplied.")
 
     return (options, args)
 
 def setup_logging(options, args):
-    log_level = logging.WARN
-    if options.debug:
+    if options.verbose >= 2:
         log_level = logging.DEBUG
-    elif options.verbose:
+    elif options.verbose == 1:
         log_level = logging.INFO
     elif options.quiet:
-        log_level = sys.maxint
+        log_level = logging.CRITICAL
+    else:
+        log_level = logging.WARN
 
     format = "[%(levelname)s] %(message)s"
 
     logging.basicConfig(level = log_level, format = format)
+
+    logging.getLogger("superzippy").debug("Logging initialized.")
 
 def main(options, args):
     log = logging.getLogger("superzippy")
@@ -107,7 +105,7 @@ def main(options, args):
     #### Create virtual environment
 
     log.debug("Creating virtual environment at %s.", virtualenv_dir)
-    output_target = None if options.debug else DEVNULL
+    output_target = None if options.verbose >= 3 else DEVNULL
 
     return_value = subprocess.call(
         ["virtualenv", virtualenv_dir],
@@ -173,7 +171,7 @@ def main(options, args):
 
     ##### Install configuration
 
-    log.debug("Copying configuration file to archive.")
+    log.debug("Adding configuration file to archive.")
 
     with open(os.path.join(build_dir, "superconfig.py"), "w") as f:
         f.write("entry_point = '%s'" % args[1])
