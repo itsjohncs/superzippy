@@ -12,9 +12,9 @@ Examples
 
 	$ superzippy superzippy superzippy.packaging:run
 	$ ./superzippy
-	Usage: superzippy [options] [PACKAGE] [ENTRY POINT]
+	Usage: superzippy [options] [PACKAGE1 PACKAGE2 ...] [ENTRY POINT]
 
-	superzippy: error: Exactly two arguments must be supplied.
+	superzippy: error: 1 or more arguments must be supplied.
 
 And now we have a single file containing all of Super Zippy's dependencies and code. We can send this single file (called ``superzippy`` above) to anyone and as long as they already have Python installed they can just run the file.
 
