@@ -139,9 +139,9 @@ def addsitedir(sitedir, known_paths = None, prepend_mode = False):
 
     # Add the site directory itself
     if prepend_mode:
-        sys.path.append(sitedir)
-    else:
         sys.path.insert(0, sitedir)
+    else:
+        sys.path.append(sitedir)
 
     with zipfile.ZipFile(archive_path, mode = "r") as archive:
         # Go trhough everything in the archive...
@@ -192,9 +192,9 @@ def addpackage(sitedir, name, known_paths, prepend_mode = False):
                 if not dircase in known_paths and exists(dir):
                     #Handy debug statement: print "added", dir
                     if prepend_mode:
-                        sys.path.append(dir)
-                    else:
                         sys.path.insert(0, dir)
+                    else:
+                        sys.path.append(dir)
                     effective_known_paths.add(dircase)
         except Exception:
             print >> sys.stderr, \
