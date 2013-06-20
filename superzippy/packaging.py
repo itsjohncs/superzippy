@@ -26,6 +26,7 @@ import os, os.path
 import zipdir
 import pkg_resources
 import shutil
+import shlex
 
 DEVNULL = open(os.devnull, "w")
 
@@ -60,22 +61,25 @@ def parse_arguments(args = sys.argv[1:]):
             "-o", "--output", action = "store", default = None,
             help =
                 "The name of the output file. Defaults to the name of the "
-                "package."
+                "last package specified on the command line."
         )
     ]
 
     parser = OptionParser(
-        usage = "usage: %prog [options] [PACKAGE] [ENTRY POINT]",
+        usage = "usage: %prog [options] [PACKAGE1 PACKAGE2 ...] [ENTRY POINT]",
         description =
             "Zips up a package and adds superzippy's super bootstrap logic to "
-            "it.",
+            "it. ENTRY POINT should be in the format module:function. Just "
+            "like the entry_point option for distutils. Each PACKAGE string "
+            "will be passed directly to pip so you may use options and expect "
+            "normal results (ex: 'PyYAML --without-libyaml').",
         option_list = option_list
     )
 
     options, args = parser.parse_args(args)
 
-    if len(args) != 2:
-        parser.error("Exactly two arguments must be supplied.")
+    if len(args) < 1:
+        parser.error("1 or more arguments must be supplied.")
 
     return (options, args)
 
@@ -97,6 +101,9 @@ def setup_logging(options, args):
 
 def main(options, args):
     log = logging.getLogger("superzippy")
+
+    packages = args[0:-1]
+    entry_point = args[-1]
 
     # Create the virtualenv directory
     virtualenv_dir = tempfile.mkdtemp()
@@ -122,21 +129,26 @@ def main(options, args):
 
     ##### Install package and dependencies
 
-    package_to_install = args[0]
     pip_path = os.path.join(virtualenv_dir, "bin", "pip")
 
-    log.debug("Installing the package %s.", package_to_install)
+    for i in packages:
 
-    return_value = subprocess.call(
-        [pip_path, "install", package_to_install],
-        stdout = output_target,
-        stderr = subprocess.STDOUT
-    )
+        log.debug("Installing package with `pip install %s`.", i)
 
-    if return_value != 0:
-        log.critical("pip returned non-zero exit status (%d).", return_value)
+        command = [pip_path, "install"] + shlex.split(i)
+        return_value = subprocess.call(
+            command,
+            stdout = output_target,
+            stderr = subprocess.STDOUT
+        )
 
-        return 1
+        if return_value != 0:
+            log.critical("pip returned non-zero exit status (%d).", return_value)
+
+            return 1
+
+    if not packages:
+        log.warn("No packages specified.")
 
     #### Move site packages over to build directory
 
@@ -174,18 +186,38 @@ def main(options, args):
     log.debug("Adding configuration file to archive.")
 
     with open(os.path.join(build_dir, "superconfig.py"), "w") as f:
-        f.write("entry_point = '%s'" % args[1])
+        f.write("entry_point = '%s'" % entry_point)
 
     ##### Zip everything up into final file
 
     log.debug("Zipping up %s.", build_dir)
 
-    output_file = options.output if options.output else package_to_install
+    if options.output:
+        output_file = options.output
+    elif packages:
+        output_file = shlex.split(packages[-1])[0]
 
-    zipdir.zipdir(
-        build_dir,
-        output_file
-    )
+        for k, c in enumerate(output_file):
+            if c in ("=", ">", "<"):
+                output_file = output_file[0:k]
+    else:
+        log.critical("No output file or packages specified.")
+
+        return 1
+
+    try:
+        zipdir.zipdir(
+            build_dir,
+            output_file
+        )
+    except IOError:
+        log.critical(
+            "Could not write to output file at '%s'.",
+            output_file,
+            exc_info = sys.exc_info()
+        )
+
+        return 1
 
     #### Make that file executable
 
