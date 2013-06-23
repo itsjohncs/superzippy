@@ -34,6 +34,9 @@ else
 	echo "Creating new commit for version change."
 	git add ./VERSION
 	git commit -m "Released $VERSION." -e
+
+	echo "Pushing commit."
+	git push origin master
 fi
 
 echo "Checking for existence of $VERSION tag."
@@ -44,10 +47,10 @@ else
 	# This will launch an editor to create the tag message
 	echo "$VERSION tag does not exist locally, creating it."
 	git tag -a $VERSION
-fi
 
-echo Pushing all tags and changes.
-git push origin master --follow-tags
+	echo "Pushing tag."
+	git push origin $VERSION
+fi
 
 echo "Looking for setup.py in current directory..."
 if [ -f "./setup.py" ]; then
