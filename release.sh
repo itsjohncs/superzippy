@@ -1,22 +1,5 @@
 #!/usr/bin/env bash
 
-# Copyright (c) 2013 John Sullivan
-# Copyright (c) 2013 Other contributers as noted in the CONTRIBUTERS file
-#
-# This file is part of superzippy
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-#
-# You may obtain a copy of the License at
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # This will ensure that the script exits if a failure occurs
 set -e
 
@@ -51,9 +34,6 @@ else
 	echo "Creating new commit for version change."
 	git add ./VERSION
 	git commit -m "Released $VERSION." -e
-
-	echo "Pushing."
-	git push origin master
 fi
 
 echo "Checking for existence of $VERSION tag."
@@ -64,10 +44,10 @@ else
 	# This will launch an editor to create the tag message
 	echo "$VERSION tag does not exist locally, creating it."
 	git tag -a $VERSION
-
-	echo "Pushing tag."
-	git push origin $VERSION
 fi
+
+echo Pushing all tags and changes.
+git push origin master --follow-tags
 
 echo "Looking for setup.py in current directory..."
 if [ -f "./setup.py" ]; then
@@ -91,3 +71,5 @@ echo "make sure to check the output of the above commands."
 # Unset the trap so we don't freak the user out by telling them an error has
 # occured when everything went fine.
 trap - EXIT
+
+exit 0
