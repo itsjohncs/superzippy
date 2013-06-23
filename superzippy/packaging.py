@@ -27,6 +27,7 @@ import zipdir
 import pkg_resources
 import shutil
 import shlex
+import errno
 
 DEVNULL = open(os.devnull, "w")
 
@@ -62,6 +63,29 @@ def parse_arguments(args = sys.argv[1:]):
             help =
                 "The name of the output file. Defaults to the name of the "
                 "last package specified on the command line."
+        ),
+        make_option(
+            "-r", "--requirements", action = "append", default = [],
+            help =
+                "A path to a requirements.txt file to parse and install from. "
+                "This option may be specified multiple times."
+        ),
+        make_option(
+            "-c", "--raw-copy", action = "append", default = [],
+            dest = "raw_copy",
+            help =
+                "A path to a file or directory to copy into the created "
+                "executable directly. Useful when you don't have a setup.py "
+                "for your project."
+        ),
+        make_option(
+            "--raw-copy-rename", action = "append", default = [],
+            dest = "raw_copy_rename",
+            help =
+                "Takes 2 arguments, first a path to a file or directory to "
+                "copy into the zuper zip directly, and second the name that "
+                "file should have (this name will be importable from within "
+                "the executable."
         )
     ]
 
@@ -105,6 +129,9 @@ def main(options, args):
     packages = args[0:-1]
     entry_point = args[-1]
 
+    # Append any requirements.txt files to the packages list.
+    packages += ["-r %s" % i for i in options.requirements]
+
     # Create the virtualenv directory
     virtualenv_dir = tempfile.mkdtemp()
     _dirty_files.append(virtualenv_dir)
@@ -132,7 +159,6 @@ def main(options, args):
     pip_path = os.path.join(virtualenv_dir, "bin", "pip")
 
     for i in packages:
-
         log.debug("Installing package with `pip install %s`.", i)
 
         command = [pip_path, "install"] + shlex.split(i)
@@ -152,15 +178,55 @@ def main(options, args):
 
     #### Move site packages over to build directory
 
+    # TODO: We should look at pip's source code and figure out how it decides
+    # where site-packages is and use the same algorithm.
+
     build_dir = tempfile.mkdtemp()
     _dirty_files.append(build_dir)
 
-    site_package_dir = ""
+    site_package_dir = None
     for root, dirs, files in os.walk(virtualenv_dir):
         if "site-packages" in dirs:
-            site_package_dir = os.path.join(root, "site-packages")
+            found = os.path.join(root, "site-packages")
+
+            # We'll only use the first one, but we want to detect them all.
+            if site_package_dir is not None:
+                log.warn(
+                    "Multiple site-packages directories found. `%s` will be "
+                    "used. `%s` was found afterwards.",
+                    site_package_dir,
+                    found
+                )
+            else:
+                site_package_dir = found
 
     shutil.move(site_package_dir, build_dir)
+
+    #### Perform any necessary raw copies.
+    raw_copies = options.raw_copy_rename
+
+    for i in options.raw_copy:
+        if i[-1] == "/":
+            i = i[0:-1]
+
+        raw_copies.append((i, os.path.basename(i)))
+
+    for file_path, dest_name in raw_copies:
+        log.debug(
+            "Performing raw copy of `%s`, destination name: `%s`.",
+            file_path,
+            dest_name
+        )
+
+        dest = os.path.join(build_dir, "site-packages", dest_name)
+
+        try:
+            shutil.copytree(file_path, dest)
+        except OSError as e:
+            if e.errno == errno.ENOTDIR:
+                shutil.copy(file_path, dest)
+            else:
+                raise
 
     ##### Install bootstrapper
 
