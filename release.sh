@@ -49,7 +49,7 @@ else
 	git tag -a $VERSION
 
 	echo "Pushing tag."
-	git push origin $VERSION
+	git push --tags origin
 fi
 
 echo "Looking for setup.py in current directory..."
