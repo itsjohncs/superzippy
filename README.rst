@@ -23,7 +23,7 @@ We can send this single file (called ``superzippy`` above) to anyone and as long
 How it Works
 ------------
 
-It installs the Python package you specify into a ``virtualenv`` using ``pip`` (so anything you can tell ``pip`` to install can be given to ``superzippy``), then grabs the site-packages directory out of the virtual environment and sticks it into a zip file along with some [super bootstrapping code](https://github.com/brownhead/superzippy/tree/master/superzippy/bootstrapper). Then it just [makes the zip file executable](http://sayspy.blogspot.com/2010/03/various-ways-of-distributing-python.html) by adding a proper shebang to it and flipping its executable bit.
+It installs the Python package you specify into a ``virtualenv`` using ``pip`` (so anything you can tell ``pip`` to install can be given to ``superzippy``), then grabs the site-packages directory out of the virtual environment and sticks it into a zip file along with some `super bootstrapping code <https://github.com/brownhead/superzippy/tree/master/superzippy/bootstrapper>`_. Then it just `makes the zip file executable <http://sayspy.blogspot.com/2010/03/various-ways-of-distributing-python.html>`_ by adding a proper shebang to it and flipping its executable bit.
 
 Motivation
 ----------
