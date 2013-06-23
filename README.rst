@@ -8,6 +8,8 @@ This is similar to `cx_Freeze <http://cx-freeze.sourceforge.net/>`_ except that 
 Examples
 --------
 
+Let's say we want to user Super Zippy on itself to create a single file containing all of Super Zippy's dependencies and code.
+
 .. code-block:: bash
 
 	$ superzippy superzippy superzippy.packaging:run
@@ -16,12 +18,12 @@ Examples
 
 	superzippy: error: 1 or more arguments must be supplied.
 
-And now we have a single file containing all of Super Zippy's dependencies and code. We can send this single file (called ``superzippy`` above) to anyone and as long as they already have Python installed they can just run the file.
+We can send this single file (called ``superzippy`` above) to anyone and as long as they already have Python installed they can just run the file.
 
 How it Works
 ------------
 
-It installs the Python package you specify into a ``virtualenv`` using ``pip`` (so anything you can tell ``pip`` to install can be given to ``superzippy``), then grabs the site-packages directory out of the virtual environment and sticks it in a zip file along with some super bootstrapping code. Then it just makes the zip file executable.
+It installs the Python package you specify into a ``virtualenv`` using ``pip`` (so anything you can tell ``pip`` to install can be given to ``superzippy``), then grabs the site-packages directory out of the virtual environment and sticks it into a zip file along with some [super bootstrapping code](https://github.com/brownhead/superzippy/tree/master/superzippy/bootstrapper). Then it just [makes the zip file executable](http://sayspy.blogspot.com/2010/03/various-ways-of-distributing-python.html) by adding a proper shebang to it and flipping its executable bit.
 
 Motivation
 ----------
