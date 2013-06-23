@@ -11,7 +11,7 @@ def read(fname):
 
 setup(
 	name = "superzippy",
-    version = read("VERSION"),
+    version = read("VERSION").strip(),
     author = "John Sullivan and other contributers",
     author_email = "john@galahgroup.com",
     description = (
