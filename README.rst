@@ -41,6 +41,11 @@ To install Super Zippy, just run
 
 You can also install from the ``setup.py`` script yourself of course, or you can even create a super zipped up version of Super Zippy using Super Zippy. ``pip`` is probably the easiest way to go though if you're already familiar with Python packages.
 
+Are you using this tool?
+------------------------
+
+If you're using this tool on your project, let me know and I'll link to you here. I'd also like to hear your feedback.
+
 Authors
 -------
 
