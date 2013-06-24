@@ -1,13 +1,14 @@
 language: python
 
 python:
-    - "2.7"
+    #- "2.7"
     - "3.3"
 
 install:
     - python setup.py --quiet install
 
 script:
+    - rm -f foo bar
     - superzippy --output=foo superzippy superzippy.packaging:run
     - ./foo --output=bar superzippy superzippy.packaging:run
     - ./bar --help
