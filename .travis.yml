@@ -8,7 +8,6 @@ install:
     - python setup.py --quiet install
 
 script:
-    - mkdir -p .tmp
-    - rm -f .tmp/*
-    - superzippy --output=.tmp/foo "git+file://$PWD" superzippy.packaging:run
-    - .tmp/foo --help
+    - rm -f foo bar
+    - superzippy --output=foo superzippy superzippy.packaging:run
+    - ls foo
