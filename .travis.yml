@@ -1,0 +1,15 @@
+language: python
+
+python:
+    - "2.7"
+    - "3.3"
+
+install:
+    - python setup.py --quiet install
+
+script:
+    - rm -rf .tmp/*
+    - mkdir -p .tmp/clean
+    - cp -r setup.py LICENSE README.rst VERSION superzippy .tmp/clean/
+    - superzippy -vvv --output=.tmp/foo .tmp/clean superzippy.packaging:run
+    - .tmp/foo --help
