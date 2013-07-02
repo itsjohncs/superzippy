@@ -23,7 +23,7 @@ import logging
 import sys
 import tempfile
 import os, os.path
-import zipdir
+from . import zipdir
 import pkg_resources
 import shutil
 import shlex
@@ -46,7 +46,7 @@ def destroy_dirty_files():
 def parse_arguments(args = sys.argv[1:]):
     option_list = [
         make_option(
-            "-v", "--verbose", action = "count",
+            "-v", "--verbose", action = "count", default=0,
             help =
                 "May be specified thrice. If specified once, INFO messages and "
                 "above are output. If specified twice, DEBUG messages and "
@@ -233,6 +233,7 @@ def main(options, args):
     log.debug("Adding bootstrapper to the archive.")
 
     bootstrap_files = {
+        "__init__.py": "__init__.py",
         "bootstrapper.py": "__main__.py",
         "zipsite.py": "zipsite.py",
         "module_locator.py": "module_locator.py"
@@ -240,7 +241,7 @@ def main(options, args):
 
     for k, v in bootstrap_files.items():
         source = pkg_resources.resource_stream("superzippy.bootstrapper", k)
-        dest = open(os.path.join(build_dir, v), "w")
+        dest = open(os.path.join(build_dir, v), "wb")
 
         shutil.copyfileobj(source, dest)
 
@@ -287,13 +288,13 @@ def main(options, args):
 
     #### Make that file executable
 
-    with file(output_file, "r") as f:
+    with open(output_file, "rb") as f:
         data = f.read()
 
-    with file(output_file, "w") as f:
-        f.write("#!/usr/bin/env python\n" + data)
+    with open(output_file, "wb") as f:
+        f.write(b"#!/usr/bin/env python\n" + data)
 
-    os.chmod(output_file, 0755)
+    os.chmod(output_file, 0o755)
 
     return 0
 

@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+from __future__ import print_function
 import site as _site
 from site import *
 
@@ -179,16 +181,16 @@ def addpackage(sitedir, name, known_paths, prepend_mode = False):
     # Parse through the .pth file
     for n, line in enumerate(f):
         # Ignore comments
-        if line.startswith("#"):
+        if line.startswith(b"#"):
             continue
 
         try:
             # Execute any lines starting with import
-            if line.startswith(("import ", "import\t")):
-                exec line
+            if line.startswith((b"import ", b"import\t")):
+                exec(line)
             else:
                 line = line.rstrip()
-                dir, dircase = makepath(sitedir, line)
+                dir, dircase = makepath(sitedir, line.decode('utf-8'))
                 if not dircase in known_paths and exists(dir):
                     #Handy debug statement: print "added", dir
                     if prepend_mode:
@@ -197,15 +199,14 @@ def addpackage(sitedir, name, known_paths, prepend_mode = False):
                         sys.path.append(dir)
                     effective_known_paths.add(dircase)
         except Exception:
-            print >> sys.stderr, \
-                "Error processing line {:d} of {}:\n".format(n + 1, fullname)
+            print("Error processing line {:d} of {}:\n".format(n + 1, fullname), file=sys.stderr)
 
             # Pretty print the exception info
             for record in traceback.format_exception(*sys.exc_info()):
                 for line in record.splitlines():
-                    print >> sys.stderr, "  " + line
+                    print("  " + line, file=sys.stderr)
 
-            print >> sys.stderr, "\nRemainder of file ignored"
+            print("\nRemainder of file ignored", file=sys.stderr)
 
             break
 
