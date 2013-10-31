@@ -17,6 +17,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import zipsite
 import superconfig
 import module_locator
@@ -28,6 +29,15 @@ zipsite.addsitedir(
 	)),
 	prepend_mode = True
 )
+
+if len(sys.argv) == 2 and sys.argv[1] == "--superzippy-debug-console":
+	# Pulled from http://stackoverflow.com/a/5597918/1989056
+	import readline
+	import code
+	vars = globals().copy()
+	vars.update(locals())
+	shell = code.InteractiveConsole(vars)
+	shell.interact()
 
 # Entry point is expected to be in the form module:function
 load_module, run_func = superconfig.entry_point.split(":")
