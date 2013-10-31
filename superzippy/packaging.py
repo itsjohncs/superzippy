@@ -28,6 +28,7 @@ import pkg_resources
 import shutil
 import shlex
 import errno
+import re
 
 DEVNULL = open(os.devnull, "w")
 
@@ -48,11 +49,12 @@ def parse_arguments(args = sys.argv[1:]):
         make_option(
             "-v", "--verbose", action = "count", default=0,
             help =
-                "May be specified thrice. If specified once, INFO messages and "
-                "above are output. If specified twice, DEBUG messages and "
+                "May be specified thrice. If specified once, INFO messages "
+                "and above are output. If specified twice, DEBUG messages and "
                 "above are output. If specified thrice, DEBUG messages and "
                 "above are output, along with the output from any invoked "
-                "programs."
+                "programs. By default, only WARN messages and above are "
+                "output."
         ),
         make_option(
             "-q", "--quiet", action = "store_true",
@@ -151,7 +153,6 @@ def main(options, args):
         log.critical(
             "virtualenv returned non-zero exit status (%d).", return_value
         )
-
         return 1
 
     ##### Install package and dependencies
@@ -170,7 +171,6 @@ def main(options, args):
 
         if return_value != 0:
             log.critical("pip returned non-zero exit status (%d).", return_value)
-
             return 1
 
     if not packages:
@@ -262,14 +262,39 @@ def main(options, args):
     if options.output:
         output_file = options.output
     elif packages:
-        output_file = shlex.split(packages[-1])[0]
+        last_package = shlex.split(packages[-1])[0]
 
-        for k, c in enumerate(output_file):
-            if c in ("=", ">", "<"):
-                output_file = output_file[0:k]
+        if os.path.isdir(last_package):
+            # Figure out the name of the package the user pointed at on their
+            # system.
+            setup_program = subprocess.Popen(["/usr/bin/env", "python",
+                os.path.join(last_package, "setup.py"), "--name"],
+                stdout = subprocess.PIPE, stderr = DEVNULL)
+            if setup_program.wait() != 0:
+                log.critical("Could not determine name of package at %s.",
+                    last_package)
+                return 1
+
+            package_name = setup_program.stdout.read().strip()
+            if re.match("[A-Za-z0-9_-]+", package_name) is None:
+                log.critical("Could nto determine name of package. setup.py "
+                    "is reporting an illegal name of %s", package_name)
+                return 1
+
+            output_file = package_name + ".sz"
+        else:
+            # Just use the name of a package we're going to pull down from
+            # the cheese shop, but cut off any versioning information (ex:
+            # bla==2.3 will become bla).
+            for k, c in enumerate(last_package):
+                if c in ("=", ">", "<"):
+                    output_file = last_package[0:k] + ".sz"
+                    break
+            else:
+                output_file = last_package + ".sz"
+
     else:
         log.critical("No output file or packages specified.")
-
         return 1
 
     try:
@@ -283,7 +308,6 @@ def main(options, args):
             output_file,
             exc_info = sys.exc_info()
         )
-
         return 1
 
     #### Make that file executable
