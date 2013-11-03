@@ -3,55 +3,121 @@ Super Zippy
 
 Super Zippy takes a Python package and its pure Python dependencies and transforms them all into a single executable file.
 
-This is similar to `cx_Freeze <http://cx-freeze.sourceforge.net/>`_ except that it does not attempt to deal with non-pure Python dependencies and thus is much lighter weight and easier to use.
+Linux is the only OS supported right now. `The basic strategy <#how-it-works>`_ that Super Zippy uses to create the executable should work for any operating system though, so please `send me an email <http://johnsullivan.name>`_ if you would be interested in helping us test other operating systems.
 
 Examples
 --------
 
-Let's say we want to user Super Zippy on itself to create a single file containing all of Super Zippy's dependencies and code.
+Say I'm trying to write a Python script that uses `Clint <https://github.com/kennethreitz/clint>`_ to provide nice console output. I can create a project with a directory tree as below (this example is in the repo under `examples/readme/ <https://github.com/brownhead/superzippy/tree/master/examples/readme/>`_).
 
-.. code-block:: bash
+.. code-block::
 
-	$ superzippy superzippy superzippy.packaging:run
-	$ ./superzippy
-	Usage: superzippy [options] [PACKAGE1 PACKAGE2 ...] [ENTRY POINT]
+    + setup.py
+    + tinyscript/
+    |   + __init__.py
+    |   + main.py
 
-	superzippy: error: 1 or more arguments must be supplied.
+The ``setup.py`` file establishes the Clint dependency and is very short. This file must exist because Super Zippy will use `pip <http://www.pip-installer.org/>`_ to install your package, and pip needs this file.
 
-We can send this single file (called ``superzippy`` above) to anyone and as long as they already have Python installed they can just run the file.
+.. code-block:: python
 
-How it Works
-------------
+    # setup.py
+    from setuptools import setup, find_packages
+    setup(
+        name = "tinyscript",
+        packages = find_packages()
+    )
 
-It installs the Python package you specify into a ``virtualenv`` using ``pip`` (so anything you can tell ``pip`` to install can be given to ``superzippy``), then grabs the site-packages directory out of the virtual environment and sticks it into a zip file along with some `super bootstrapping code <https://github.com/brownhead/superzippy/tree/master/superzippy/bootstrapper>`_. Then it just `makes the zip file executable <http://sayspy.blogspot.com/2010/03/various-ways-of-distributing-python.html>`_ by adding a proper shebang to it and flipping its executable bit.
+The ``__init__.py`` file is empty (see `here <http://stackoverflow.com/questions/448271/what-is-init-py-for>`_ for info).
 
-Motivation
-----------
+Finally, the ``main.py`` file has our actual script.
 
-I created this for a tool called the `Galah API Client <https://www.github.com/galah-group/galah-apiclient>`_ which is a simple tool that has only pure Python dependencies. It is basically a script but since it is a little complex I didn't want everything to be in a single file as that gets tedious fast... But I still wanted a good way to distribute it to my users who are not Python developers, may not have root access, and don't want to deal with ``virtualenv`` and ``pip``.
+.. code-block:: python
+
+    # main.py
+    import sys
+
+    def foo():
+        print "I am a mighty foo function!"
+        sys.exit(0)
+
+    def bar():
+        print "Nice to meet you, I am bar."
+        sys.exit(1)
+
+    if __name__ == "__main__":
+        print "Running as a script!"
+        sys.exit(2)
+
+We can now use Super Zippy.
+
+.. code-block:: shell
+
+    $ ls
+    setup.py tinyscript/
+    $ superzippy . tinyscript.main:foo
+    $ ls
+    setup.py tinyscript/ tinyscript.sz
+    $ ./tinyscript.sz
+    I am a mighty foo function!
+    $ echo $?
+    0
+
+If we'd like to have the ``bar()`` function be our entry point (rather than the ``foo()`` function above), we could run
+
+.. code-block:: shell
+
+    $ superzippy . tinyscript.main:bar
+    $ ./tinyscript.sz
+    Nice to meet you, I am bar.
+    $ echo $?
+    1
+
+There's a number of options you can give Super Zippy and you can get an up-to-date listing of them by running ``superzippy -h``.
 
 Installing
 ----------
 
-To install Super Zippy, just run
+You can install Super Zippy from pip easily (`see here for installing pip <http://www.pip-installer.org/en/latest/installing.html>`_). This will grab the latest stable release.
 
 .. code-block:: shell
 
-	$ pip install superzippy
+    $ pip install superzippy
 
-You can also install from the ``setup.py`` script yourself of course, or you can even create a super zipped up version of Super Zippy using Super Zippy. ``pip`` is probably the easiest way to go though if you're already familiar with Python packages.
+Alternatively, you can install the most recent version off of GitHub.
 
-Are you using this tool?
-------------------------
+.. code-block:: shell
 
-If you're using this tool on your project, let me know and I'll link to you here. I'd also like to hear your feedback.
+    $ git clone https://github.com/brownhead/superzippy.git
+    $ cd superzippy/
+    $ pip install .
 
-Authors
--------
+If you are planning to do development on Super Zippy, you may want to install Super Zippy in `editable mode <http://pythonhosted.org/distribute/setuptools.html#development-mode>`_. You can do this by adding the ``-e`` flag to pip above to get ``pip install -e .``.
 
-`John Sullivan <http://brownhead.github.io>`_
+You can of course also use Super Zippy on itself to make a Super Zip of Super Zippy. Though doing this automatically may be done in the future, it seems mostly unecessary at the moment to add this into our release process.
+
+How it Works
+------------
+
+Super Zippy's algorithm is fairly straightforward.
+
+1. Create a virtual environment using `virtualenv <http://www.virtualenv.org/>`_.
+#. Install all the desired packages into the virtual environment using `pip <http://www.pip-installer.org/>`_.
+#. Grab the site-packages directory out from the virtual environment (which is the directory that contains all installed packages) and put it in an empty temporary directory.
+#. Add a `__main__.py <http://stackoverflow.com/questions/4042905/what-is-main-py>`_ file to the temporary directory that executes the desired function.
+#. Zip the temporary directory up.
+#. Make the zip file executable by flipping the executable bit and adding ``#!/usr/bin/env python`` to the beginning of the file.
+
+Who Made This?
+--------------
+
+My name is `John Sullivan <http://johnsullivan.name>`_ and I created this over a couple weekends with the assistance of `Chris Manghane <https://github.com/paranoiacblack>`_. After the initial release, `Steven Myint <https://github.com/myint>`_ graciously submitted several useful patches as well.
+
+If you are interested in helping with the development, feel free to fork and dive in! If you'd just like to send me a message you can find my contact information on my portfolio at `johnsullivan.name <http://johnsullivan.name>`_.
 
 License
 -------
 
-Apache License v2.0 (see LICENSE)
+Apache License v2.0 (see `LICENSE <https://github.com/brownhead/superzippy/blob/master/LICENSE>`_ for full text).
+
+If you need a more permissive license please `open up an issue in the tracker <https://github.com/brownhead/superzippy/issues>`_ that describes your desired use case.
