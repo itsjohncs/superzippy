@@ -25,7 +25,8 @@ The ``setup.py`` file establishes the Clint dependency and is very short. This f
     from setuptools import setup, find_packages
     setup(
         name = "tinyscript",
-        packages = find_packages()
+        packages = find_packages(),
+        install_requires = ["Clint"]
     )
 
 The ``__init__.py`` file is empty (see `here <http://stackoverflow.com/questions/448271/what-is-init-py-for>`_ for info).
@@ -35,18 +36,19 @@ Finally, the ``main.py`` file has our actual script.
 .. code-block:: python
 
     # main.py
+    from clint.textui import puts, colored
     import sys
 
     def foo():
-        print "I am a mighty foo function!"
+        puts(colored.red("I am a mighty foo function!"))
         sys.exit(0)
 
     def bar():
-        print "Nice to meet you, I am bar."
+        puts(colored.blue("Nice to meet you, I am bar."))
         sys.exit(1)
 
     if __name__ == "__main__":
-        print "Running as a script!"
+        puts("Running as a script!")
         sys.exit(2)
 
 We can now use Super Zippy.
@@ -62,6 +64,8 @@ We can now use Super Zippy.
     I am a mighty foo function!
     $ echo $?
     0
+
+*Note that "I am a mighty foo function!" above is displayed in red if you actually run it.*
 
 If we'd like to have the ``bar()`` function be our entry point (rather than the ``foo()`` function above), we could run
 
