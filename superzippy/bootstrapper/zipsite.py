@@ -20,6 +20,8 @@ from __future__ import print_function
 import site as _site
 from site import *
 
+
+from contextlib import closing
 import zipfile
 import os
 import traceback
@@ -112,7 +114,7 @@ def exists(path):
         return os.path.exists(path)
 
     # otherwise check the zip file.
-    with zipfile.ZipFile(archive_path, mode = "r") as archive:
+    with closing(zipfile.ZipFile(archive_path, mode = "r")) as archive:
         try:
             archive.getinfo(file_path)
         except KeyError:
@@ -145,7 +147,7 @@ def addsitedir(sitedir, known_paths = None, prepend_mode = False):
     else:
         sys.path.append(sitedir)
 
-    with zipfile.ZipFile(archive_path, mode = "r") as archive:
+    with closing(zipfile.ZipFile(archive_path, mode = "r")) as archive:
         # Go trhough everything in the archive...
         for i in archive.infolist():
             # and grab all the .pth files.
