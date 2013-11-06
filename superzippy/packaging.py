@@ -275,7 +275,18 @@ def main(options, args):
                     last_package)
                 return 1
 
-            package_name = setup_program.stdout.read().strip()
+            # Grab the output of the setup program
+            package_name_raw = setup_program.stdout.read()
+
+            # Decode the output into text. Whatever our encoding is is
+            # probably the same as what the setup.py program spat out.
+            package_name_txt = package_name_raw.decode(sys.stdout.encoding)
+
+            # Strip any leading and trailing whitespace
+            package_name = package_name_txt.strip()
+
+            # Verify that what we got was a valid package name (this handles
+            # most cases where an error occurs in the setup.py program).
             if re.match("[A-Za-z0-9_-]+", package_name) is None:
                 log.critical("Could nto determine name of package. setup.py "
                     "is reporting an illegal name of %s", package_name)
