@@ -42,3 +42,9 @@ docs/_build/
 
 # Vim files
 *~
+
+# Super zips
+*.sz
+
+# Virtual Environments
+venv*/
