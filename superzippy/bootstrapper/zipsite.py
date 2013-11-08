@@ -16,6 +16,7 @@
 # limitations under the License.
 
 
+from __future__ import with_statement
 from __future__ import print_function
 import site as _site
 from site import *
