@@ -110,7 +110,9 @@ Super Zippy's algorithm is fairly straightforward.
 #. Grab the site-packages directory out from the virtual environment (which is the directory that contains all installed packages) and put it in an empty temporary directory.
 #. Add a `__main__.py <http://stackoverflow.com/questions/4042905/what-is-main-py>`_ file to the temporary directory that executes the desired function.
 #. Zip the temporary directory up.
-#. Make the zip file executable by flipping the executable bit and adding ``#!/usr/bin/env python`` to the beginning of the file.
+#. Make the zip file executable by flipping the executable bit and adding ``#!/usr/bin/env python`` to the beginning of the zip file.
+
+Adding a shebang to the beginning of the zip file doesn't affect our ability to decompress it because a zip file's "header" is located at the back of the file (see `this wikipedia article <http://en.wikipedia.org/wiki/Zip_(file_format)#Structure>`_).
 
 Who Made This?
 --------------
