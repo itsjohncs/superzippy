@@ -310,10 +310,7 @@ def main(options, args):
         return 1
 
     try:
-        zipdir.zipdir(
-            build_dir,
-            output_file
-        )
+        zipdir.zip_directory(build_dir, output_file)
     except IOError:
         log.critical(
             "Could not write to output file at '%s'.",

@@ -18,29 +18,20 @@
 # limitations under the License.
 
 """
-Module for zipping up an entire directory.
-
-.. author: J.F. Sebastian, http://stackoverflow.com/a/296722/1989056
+Module that provides a useful function that can be used to zip up an entire
+directory.
 
 """
 
 from __future__ import with_statement
 from contextlib import closing
-from zipfile import ZipFile, ZIP_DEFLATED
+import zipfile
 import os
+import os.path
 
-def zipdir(basedir, archivename):
-    assert os.path.isdir(basedir)
-    with closing(ZipFile(archivename, "w", ZIP_DEFLATED)) as z:
-        for root, dirs, files in os.walk(basedir):
-            #NOTE: ignore empty directories
-            for fn in files:
-                absfn = os.path.join(root, fn)
-                zfn = absfn[len(basedir)+len(os.sep):] #XXX: relative path
-                z.write(absfn, zfn)
-
-if __name__ == '__main__':
-    import sys
-    basedir = sys.argv[1]
-    archivename = sys.argv[2]
-    zipdir(basedir, archivename)
+def zip_directory(path, output_file, compression = zipfile.ZIP_DEFLATED):
+    with closing(zipfile.ZipFile(output_file, "w", compression)) as f:
+        for dir_path, dir_names, file_names in os.walk(path):
+            for i in file_names:
+                file_path = os.path.join(dir_path, i)
+                f.write(file_path, os.path.relpath(file_path, path))
