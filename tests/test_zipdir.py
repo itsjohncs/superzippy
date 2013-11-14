@@ -15,6 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# futures
+from __future__ import with_statement
+
 # test helpers
 import file_utilities
 
@@ -25,17 +28,18 @@ import pytest
 import superzippy.zipdir
 
 # stdlib
+from contextlib import closing
 import zipfile
 import tempfile
 import shutil
 import os
+import sys
 
 class TestZipDir:
     good_cases = [
         ["a", "b", ("a/foo", 1000), ("a/bar", 1000), ("b/baz", 1000)],
         ["a", ("a/foo", 0)],
-        [("bar", 1000)],
-        []
+        [("bar", 1000)]
     ]
 
     @pytest.fixture
@@ -58,7 +62,7 @@ class TestZipDir:
 
             # Unzip our directory tree
             unzip_dir = tempfile.mkdtemp()
-            with zipfile.ZipFile(zip_file, "r") as f:
+            with closing(zipfile.ZipFile(zip_file, "r")) as f:
                 f.extractall(unzip_dir)
         except:
             if test_dir is not None:
@@ -94,8 +98,9 @@ class TestZipDir:
         real_contents = file_utilities.get_files(unzip_dir)
         expected_contents = file_utilities.get_files(test_dir)
 
-        print "real_contents =", real_contents
-        print "expected_contents =", expected_contents
+        sys.stdout.write("real_contents = %s\n" % (str(real_contents), ))
+        sys.stdout.write(
+            "expected_contents = %s\n" % (str(expected_contents), ))
 
         assert set(real_contents) == set(expected_contents)
 
@@ -111,7 +116,7 @@ class TestZipDir:
 
         for i in test_case:
             if isinstance(i, tuple):
-                print "checking size of", i[0]
+                sys.stdout.write("checking size of %s\n" % (i[0], ))
                 file_size = os.stat(
                     os.path.join(test_dir, i[0])).st_size
                 assert file_size == i[1]

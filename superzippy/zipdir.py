@@ -22,6 +22,7 @@ directory.
 """
 
 from __future__ import with_statement
+
 from contextlib import closing
 import zipfile
 import os
@@ -34,6 +35,10 @@ def zip_directory(path, output_file, compression = zipfile.ZIP_DEFLATED):
     .. note::
 
         Empty directories are not added to the zip file.
+
+    .. note::
+
+        Creating empty zip files is not supported on version < 2.7.1.
 
     """
 

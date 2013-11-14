@@ -25,6 +25,16 @@ import os.path
 import random
 import string
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
+try:
+    xrange
+except NameError:
+    xrange = range
+
 def create_test_directory(tree):
     """
     Creates a temporary directory with the given file tree in it.
@@ -48,14 +58,14 @@ def create_test_directory(tree):
 
     """
 
-    # Note: This will create a directory with permissions 0700
+    # Note: This will create a directory with permissions 0o700
     temp_dir = tempfile.mkdtemp()
 
     resolve_path = lambda x: os.path.join(temp_dir, x)
 
     for i in tree:
-        if isinstance(i, basestring):
-            os.mkdir(resolve_path(i), 0700)
+        if isinstance(i, str) or isinstance(i, unicode):
+            os.mkdir(resolve_path(i), 0o700)
         elif isinstance(i, tuple) and len(i) == 2:
             path, size = i
             with open(resolve_path(path), "w") as f:

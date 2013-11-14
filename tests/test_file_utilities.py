@@ -31,6 +31,7 @@ import file_utilities
 import pytest
 
 # stdlib
+import sys
 import os
 import os.path
 import shutil
@@ -61,8 +62,7 @@ class TestCreateTestDirectory:
         ["a", "b", "c", ("a/foo", 1000), ("a/bar", 1000)],
         ["a", ("a/foo", 0)],
         [("bar", 1000)],
-        ["bar"],
-        []
+        ["bar"]
     ]
 
     @pytest.mark.parametrize("test_case", good_cases)
@@ -79,8 +79,9 @@ class TestCreateTestDirectory:
             expected_contents = \
                 [(i[0] if isinstance(i, tuple) else i) for i in test_case]
 
-            print "real_contents =", real_contents
-            print "expected_contents =", expected_contents
+            sys.stdout.write("real_contents = %s\n" % (real_contents, ))
+            sys.stdout.write(
+                "expected_contents = %s\n" % (expected_contents, ))
 
             assert set(real_contents) == set(expected_contents)
         finally:
@@ -97,7 +98,7 @@ class TestCreateTestDirectory:
         try:
             for i in test_case:
                 if isinstance(i, tuple):
-                    print "checking size of", i[0]
+                    sys.stdout.write("checking size of %s\n" % (i[0], ))
                     file_size = os.stat(
                         os.path.join(test_dir, i[0])).st_size
                     assert file_size == i[1]
