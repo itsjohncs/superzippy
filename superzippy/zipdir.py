@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (c) 2013 John Sullivan
 # Copyright (c) 2013 Other contributers as noted in the CONTRIBUTERS file
 #
@@ -30,6 +28,15 @@ import os
 import os.path
 
 def zip_directory(path, output_file, compression = zipfile.ZIP_DEFLATED):
+    """
+    Compresses the directory at ``path`` into a zip file at ``output_file``.
+
+    .. note::
+
+        Empty directories are not added to the zip file.
+
+    """
+
     with closing(zipfile.ZipFile(output_file, "w", compression)) as f:
         for dir_path, dir_names, file_names in os.walk(path):
             for i in file_names:
