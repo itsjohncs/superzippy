@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (c) 2013 John Sullivan
 # Copyright (c) 2013 Other contributers as noted in the CONTRIBUTERS file
 #
@@ -24,12 +22,26 @@ directory.
 """
 
 from __future__ import with_statement
+
 from contextlib import closing
 import zipfile
 import os
 import os.path
 
 def zip_directory(path, output_file, compression = zipfile.ZIP_DEFLATED):
+    """
+    Compresses the directory at ``path`` into a zip file at ``output_file``.
+
+    .. note::
+
+        Empty directories are not added to the zip file.
+
+    .. note::
+
+        Creating empty zip files is not supported on version < 2.7.1.
+
+    """
+
     with closing(zipfile.ZipFile(output_file, "w", compression)) as f:
         for dir_path, dir_names, file_names in os.walk(path):
             for i in file_names:
