@@ -19,7 +19,7 @@
 from __future__ import with_statement
 
 # test helpers
-import file_utilities
+import superzippy.tests.file_utilities as file_utilities
 
 # external
 import pytest
