@@ -10,7 +10,7 @@ install:
     - python setup.py --quiet install
 
 script:
-    - py.test --tb native
+    - py.test --tb native superzippy
     - rm -rf .tmp/*
     - mkdir -p .tmp/clean
     - cp -r setup.py LICENSE README.rst VERSION superzippy .tmp/clean/
