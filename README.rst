@@ -94,9 +94,9 @@ Alternatively, you can install the most recent version off of GitHub.
 
     $ git clone https://github.com/brownhead/superzippy.git
     $ cd superzippy/
-    $ pip install .
+    $ python setup.py install
 
-If you are planning to do development on Super Zippy, you may want to install Super Zippy in `editable mode <http://pythonhosted.org/distribute/setuptools.html#development-mode>`_. You can do this by adding the ``-e`` flag to pip above to get ``pip install -e .``.
+If you are planning to do development on Super Zippy, you may want to install Super Zippy in `editable mode <http://pythonhosted.org/distribute/setuptools.html#development-mode>`_. You can do this by running ``python setup.py develop`` instead of ``python setup.py install``.
 
 You can of course also use Super Zippy on itself to make a Super Zip of Super Zippy. Though doing this automatically may be done in the future, it seems mostly unecessary at the moment to add this into our release process.
 
