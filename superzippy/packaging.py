@@ -34,7 +34,7 @@ import errno
 import re
 
 # internal
-import zipdir
+from . import  zipdir
 
 DEVNULL = open(os.devnull, "w")
 
@@ -286,7 +286,8 @@ def main(options, args):
 
             # Decode the output into text. Whatever our encoding is is
             # probably the same as what the setup.py program spat out.
-            package_name_txt = package_name_raw.decode(sys.stdout.encoding)
+            package_name_txt = package_name_raw.decode(
+                sys.stdout.encoding or "UTF-8")
 
             # Strip any leading and trailing whitespace
             package_name = package_name_txt.strip()
