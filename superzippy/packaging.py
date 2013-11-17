@@ -182,9 +182,9 @@ def main(options, args):
     if not packages:
         log.warn("No packages specified.")
 
-    #### Uninstall pip
+    #### Uninstall extraneous packages (pip and setuptools)
     return_value = subprocess.call(
-        [pip_path, "uninstall", "--yes", "pip"],
+        [pip_path, "uninstall", "--yes", "pip", "setuptools"],
         stdout = output_target,
         stderr = subprocess.STDOUT
     )
@@ -217,6 +217,11 @@ def main(options, args):
                 )
             else:
                 site_package_dir = found
+
+    # A couple .pth files are consistently left over from the previous step,
+    # delete them.
+    os.remove(os.path.join(site_package_dir, "easy-install.pth"))
+    os.remove(os.path.join(site_package_dir, "setuptools.pth"))
 
     shutil.move(site_package_dir, build_dir)
 
