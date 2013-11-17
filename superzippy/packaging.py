@@ -17,20 +17,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# future
 from __future__ import with_statement
 
+# stdlib
 from optparse import OptionParser, make_option
 import subprocess
 import logging
 import sys
 import tempfile
-import os, os.path
-from . import zipdir
+import os
 import pkg_resources
 import shutil
 import shlex
 import errno
 import re
+
+# internal
+import zipdir
 
 DEVNULL = open(os.devnull, "w")
 
