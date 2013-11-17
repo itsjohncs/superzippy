@@ -182,6 +182,18 @@ def main(options, args):
     if not packages:
         log.warn("No packages specified.")
 
+    #### Uninstall pip
+    return_value = subprocess.call(
+        [pip_path, "uninstall", "--yes", "pip"],
+        stdout = output_target,
+        stderr = subprocess.STDOUT
+    )
+
+    if return_value != 0:
+        log.critical("pip returned non-zero exit status (%d).",
+            return_value)
+        return 1
+
     #### Move site packages over to build directory
 
     # TODO: We should look at pip's source code and figure out how it decides
