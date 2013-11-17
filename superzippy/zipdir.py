@@ -21,12 +21,13 @@ directory.
 
 """
 
+# future
 from __future__ import with_statement
 
+# stdlib
 from contextlib import closing
 import zipfile
 import os
-import os.path
 
 def zip_directory(path, output_file, compression = zipfile.ZIP_DEFLATED):
     """

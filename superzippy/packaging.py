@@ -17,20 +17,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# future
 from __future__ import with_statement
 
+# stdlib
 from optparse import OptionParser, make_option
 import subprocess
 import logging
 import sys
 import tempfile
-import os, os.path
-from . import zipdir
+import os
 import pkg_resources
 import shutil
 import shlex
 import errno
 import re
+
+# internal
+from . import  zipdir
 
 DEVNULL = open(os.devnull, "w")
 
@@ -282,7 +286,8 @@ def main(options, args):
 
             # Decode the output into text. Whatever our encoding is is
             # probably the same as what the setup.py program spat out.
-            package_name_txt = package_name_raw.decode(sys.stdout.encoding)
+            package_name_txt = package_name_raw.decode(
+                sys.stdout.encoding or "UTF-8")
 
             # Strip any leading and trailing whitespace
             package_name = package_name_txt.strip()

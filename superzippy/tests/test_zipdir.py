@@ -19,13 +19,13 @@
 from __future__ import with_statement
 
 # test helpers
-import superzippy.tests.file_utilities as file_utilities
+from . import file_utilities
 
 # external
 import pytest
 
 # internal
-import superzippy.zipdir
+from .. import zipdir
 
 # stdlib
 from contextlib import closing
@@ -58,7 +58,7 @@ class TestZipDir:
             zip_file = zip_file_handle.name
 
             # Zip up our directory tree
-            superzippy.zipdir.zip_directory(test_dir, zip_file)
+            zipdir.zip_directory(test_dir, zip_file)
 
             # Unzip our directory tree
             unzip_dir = tempfile.mkdtemp()
