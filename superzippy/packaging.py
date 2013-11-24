@@ -220,8 +220,11 @@ def main(options, args):
 
     # A couple .pth files are consistently left over from the previous step,
     # delete them.
-    os.remove(os.path.join(site_package_dir, "easy-install.pth"))
-    os.remove(os.path.join(site_package_dir, "setuptools.pth"))
+    extraneous_pth_files = ["easy-install.pth", "setuptools.pth"]
+    for i in extraneous_pth_files:
+        path = os.path.join(site_package_dir, i)
+        if os.path.exists(path):
+            os.remove(path)
 
     shutil.move(site_package_dir, build_dir)
 

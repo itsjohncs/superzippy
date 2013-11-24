@@ -18,6 +18,7 @@
 # stdlib
 import pkg_resources
 import os
+import re
 try:
     import ConfigParser as configparser # Python 2.x
 except ImportError:
@@ -75,10 +76,19 @@ class SampleConfig:
     def get_package_name(self):
         return self._parser.get("info", "name")
 
+    def is_python_supported(self, version_string):
+        try:
+            regex = self._parser.get("info", "supports_python")
+        except:
+            return True
+
+        return re.match(regex, version_string) is not None
+
     class EntryPoint:
-        def __init__(self, name, expected_output):
+        def __init__(self, name, expected_output, options):
             self.name = name
             self.expected_output = expected_output
+            self.options = options
 
     def get_entry_points(self):
         sections = [i for i in self._parser.sections() if
@@ -91,9 +101,15 @@ class SampleConfig:
             except configparser.NoOptionError:
                 expected_output = []
 
+            try:
+                options = eval(self._parser.get(i, "options"))
+            except configparser.NoOptionError:
+                options = []
+
             result.append(SampleConfig.EntryPoint(
                 name = self._parser.get(i, "name"),
-                expected_output = expected_output
+                expected_output = expected_output,
+                options = options
             ))
 
         return result

@@ -34,6 +34,12 @@ import pytest
 # internal
 from . import sample_info
 
+# Support Pythons without unicode support
+try:
+    unicode
+except NameError:
+    unicode = str
+
 @pytest.mark.parametrize("sample", sample_info.list_samples())
 def test_sample(sample):
     """
@@ -44,11 +50,15 @@ def test_sample(sample):
     sample_dir = sample_info.get_sample_dir(sample)
     config = sample_info.get_sample_config(sample)
 
+    python_version = ".".join(str(i) for i in sys.version_info)
+    if not config.is_python_supported(python_version):
+        pytest.skip("Test not supported in this Python.")
+
     for i in config.get_entry_points():
         temp_dir = tempfile.mkdtemp()
         try:
             zip_process = subprocess.Popen(
-                ["superzippy", "-vvv", sample_dir, i.name],
+                ["superzippy", "-vvv"] + i.options + [sample_dir, i.name],
                 cwd = temp_dir
             )
             zip_process.wait()
