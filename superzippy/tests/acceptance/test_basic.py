@@ -57,14 +57,15 @@ def test_sample(sample):
     for i in config.get_entry_points():
         temp_dir = tempfile.mkdtemp()
         try:
-            zip_process = subprocess.Popen(
-                ["superzippy", "-vvv"] + i.options + [sample_dir, i.name],
-                cwd = temp_dir
-            )
-            zip_process.wait()
-
             superzip_path = \
                 os.path.join(temp_dir, config.get_package_name()) + ".sz"
+
+            zip_process = subprocess.Popen(
+                ["superzippy", "-o", superzip_path, "-vvv"] + i.options +
+                [sample_dir, i.name],
+                cwd = sample_dir
+            )
+            zip_process.wait()
 
             assert os.path.exists(superzip_path), \
                 "%s doesn't exist" % (superzip_path, )
