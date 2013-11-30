@@ -14,6 +14,12 @@ fi
 # This will ensure the user is visually prompted upon failure
 trap "echo FAILURE: An error has occured! >&2" EXIT
 
+# Figure out where the script is
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Move into the root of the project
+cd "$DIR"/..
+
 VERSION=$1
 
 echo "Checking for existence of VERSION file."
