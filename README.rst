@@ -3,7 +3,7 @@ Super Zippy
 
 Super Zippy takes a Python package and its pure Python dependencies and transforms them all into a single executable file.
 
-Linux is the only OS supported right now. `The basic strategy <#how-it-works>`_ that Super Zippy uses to create the executable should work for any operating system though, so please `send me an email <http://johnsullivan.name>`_ if you would be interested in helping us test other operating systems.
+Linux is the only OS supported right now. `The basic strategy <https://github.com/brownhead/superzippy#how-it-works>`_ that Super Zippy uses to create the executable should work for any operating system though, so please `send me an email <http://johnsullivan.name>`_ if you would be interested in helping us test other operating systems.
 
 Examples
 --------
