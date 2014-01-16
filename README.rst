@@ -53,7 +53,7 @@ Finally, the ``main.py`` file has our actual script.
 
 We can now use Super Zippy.
 
-.. code-block:: shell
+.. code-block:: bash
 
     $ ls
     setup.py tinyscript/
@@ -69,7 +69,7 @@ We can now use Super Zippy.
 
 If we'd like to have the ``bar()`` function be our entry point (rather than the ``foo()`` function above), we could run
 
-.. code-block:: shell
+.. code-block:: bash
 
     $ superzippy . tinyscript.main:bar
     $ ./tinyscript.sz
@@ -84,13 +84,13 @@ Installing
 
 You can install Super Zippy from pip easily (`see here for installing pip <http://www.pip-installer.org/en/latest/installing.html>`_). This will grab the latest stable release.
 
-.. code-block:: shell
+.. code-block:: bash
 
     $ pip install superzippy
 
 Alternatively, you can install the most recent version off of GitHub.
 
-.. code-block:: shell
+.. code-block:: bash
 
     $ git clone https://github.com/brownhead/superzippy.git
     $ cd superzippy/
