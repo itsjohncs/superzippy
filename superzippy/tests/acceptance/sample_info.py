@@ -63,9 +63,6 @@ def list_samples():
         return (os.path.isdir(os.path.join(samples_dir, name)) and
             os.path.isfile(os.path.join(samples_dir, name, "testing.ini")))
 
-    open("/tmp/outputbla.txt", "w").write(
-        str(os.listdir(samples_dir)) + "\n" + str(filter(is_sample, os.listdir(samples_dir))))
-
     return filter(is_sample, os.listdir(samples_dir))
 
 class SampleConfig:
