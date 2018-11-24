@@ -8,7 +8,7 @@ Linux and Mac OS X are the only operating systems that are officially supported 
 Examples
 --------
 
-Say I'm trying to write a Python script that uses `Clint <https://github.com/kennethreitz/clint>`_ to provide nice console output. I can create a project with a directory tree as below (this example is in the repo under `examples/readme/ <https://github.com/brownhead/superzippy/tree/master/examples/readme/>`_).
+Say I'm trying to write a Python script that uses `Clint <https://github.com/kennethreitz/clint>`_ to provide nice console output. I can create a project with a directory tree as below (this example is in the repo under `examples/readme/ <https://github.com/itsjohncs/superzippy/tree/master/examples/readme/>`_).
 
 .. code-block::
 
@@ -92,7 +92,7 @@ Alternatively, you can install the most recent version off of GitHub.
 
 .. code-block:: bash
 
-    $ git clone https://github.com/brownhead/superzippy.git
+    $ git clone https://github.com/itsjohncs/superzippy.git
     $ cd superzippy/
     $ python setup.py install
 
@@ -124,6 +124,6 @@ If you are interested in helping with the development, feel free to fork and div
 License
 -------
 
-Apache License v2.0 (see `LICENSE <https://github.com/brownhead/superzippy/blob/master/LICENSE>`_ for full text).
+Apache License v2.0 (see `LICENSE <https://github.com/itsjohncs/superzippy/blob/master/LICENSE>`_ for full text).
 
-If you need a more permissive license please `open up an issue in the tracker <https://github.com/brownhead/superzippy/issues>`_ that describes your desired use case.
+If you need a more permissive license please `open up an issue in the tracker <https://github.com/itsjohncs/superzippy/issues>`_ that describes your desired use case.

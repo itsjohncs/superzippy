@@ -30,7 +30,7 @@ setup(
     ),
     license = "Apache v2.0",
     keywords = "python packaging",
-    url = "https://www.github.com/brownhead/superzippy",
+    url = "https://www.github.com/itsjohncs/superzippy",
     long_description = read("README.rst"),
     classifiers = [
         "Development Status :: 2 - Pre-Alpha",
