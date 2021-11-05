@@ -1,3 +1,9 @@
+**Super Zippy is no longer maintained.**
+
+Python 3.5 ships with a tool that is about as easy to use as SuperZippy. Check out `zipapp <https://docs.python.org/3/library/zipapp.html#creating-standalone-applications-with-zipapp>`_!
+
+---
+
 Super Zippy
 ===========
 
